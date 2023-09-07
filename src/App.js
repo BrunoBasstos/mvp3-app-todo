@@ -1,7 +1,7 @@
 // /src/App.js
 import React, {useState, useEffect} from 'react';
 import {BrowserRouter as Router, Route, Routes} from 'react-router-dom';
-import axios from 'axios';
+import {todoApi} from './axiosConfig';
 import {Container} from '@mui/material';
 import TaskList from './components/TaskList';
 import UserList from './components/UserList';
@@ -33,9 +33,9 @@ function App() {
     useEffect(() => {
         const token = localStorage.getItem('token');
         if (token) {
-            axios.defaults.headers.common.Authorization = `Bearer ${token}`;
+            todoApi.defaults.headers.common.Authorization = `Bearer ${token}`;
             setIsLoggedIn(true);
-            axios.get("/auth")
+            todoApi.get("/auth")
                 .then((response) => {
                     setIsLoggedIn(true);
                     setLoggedUser(response.data);
@@ -47,7 +47,7 @@ function App() {
                     localStorage.removeItem("token");
                 });
         } else {
-            axios.defaults.headers.common.Authorization = null;
+            todoApi.defaults.headers.common.Authorization = null;
             setIsLoggedIn(false);
             setLoggedUser({});
         }
@@ -61,7 +61,7 @@ function App() {
     const handleLogout = () => {
         localStorage.removeItem('token');
         setIsLoggedIn(false);
-        axios.defaults.headers.common.Authorization = null;
+        todoApi.defaults.headers.common.Authorization = null;
     };
 
     return (
