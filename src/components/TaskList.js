@@ -21,16 +21,16 @@ import {
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import { toast, ToastContainer } from "react-toastify";
 import ErrorToast from "./ErrorToast";
-import LowPriorityIcon from '@mui/icons-material/LowPriority';
-import PriorityHighIcon from '@mui/icons-material/PriorityHigh';
-import ErrorIcon from '@mui/icons-material/Error';
-import EditIcon from '@mui/icons-material/Edit';
-import SaveIcon from '@mui/icons-material/Save';
-import CancelIcon from '@mui/icons-material/Cancel';
-import AccountCircleIcon from '@mui/icons-material/AccountCircle';
-import DatePicker from '@mui/lab/DatePicker';
-import AdapterDateFns from '@mui/lab/AdapterDateFns';
-import LocalizationProvider from '@mui/lab/LocalizationProvider';
+import LowPriorityIcon from "@mui/icons-material/LowPriority";
+import PriorityHighIcon from "@mui/icons-material/PriorityHigh";
+import ErrorIcon from "@mui/icons-material/Error";
+import EditIcon from "@mui/icons-material/Edit";
+import SaveIcon from "@mui/icons-material/Save";
+import CancelIcon from "@mui/icons-material/Cancel";
+import AccountCircleIcon from "@mui/icons-material/AccountCircle";
+import DatePicker from "@mui/lab/DatePicker";
+import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
+import { LocalizationProvider } from '@mui/x-date-pickers';
 
 const TaskList = ({ loggedUser }) => {
     const [tasks, setTasks] = useState([]);
