@@ -1,6 +1,6 @@
 // /src/components/Register.js
 import React, {useState} from 'react';
-import axios from 'axios';
+import { todoApi } from '../axiosConfig';
 import {Box, TextField, Button, Typography, Grid} from '@mui/material';
 import 'react-toastify/dist/ReactToastify.css';
 import {toast, ToastContainer} from 'react-toastify';
@@ -40,7 +40,7 @@ const Register = ({handleRegister, navigate}) => {
             toast.error(<ErrorToast errors={formErrors}/>);
         } else {
 
-            axios.post('/usuario', formData)
+            todoApi.post('/usuario', formData)
                 .then(response => {
                     const {access_token: token} = response.data;
                     localStorage.setItem('token', token);
