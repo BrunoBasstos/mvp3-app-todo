@@ -1,6 +1,6 @@
 // /src/components/ErrorToast.js
 import React, {useState} from 'react';
-import axios from 'axios';
+import { todoApi } from '../axiosConfig';
 import {Box, TextField, Button, Typography} from '@mui/material';
 import {toast, ToastContainer} from "react-toastify";
 import ErrorToast from "./ErrorToast";
@@ -31,11 +31,11 @@ const Login = ({onLogin, navigate}) => {
             toast.error(<ErrorToast errors={formErrors}/>);
         } else {
             try {
-                const response = await axios.post('/login', formData);
+                const response = await todoApi.post('/login', formData);
                 const loggedUser = response.data[0];
                 const {access_token: token} = response.data[0];
                 localStorage.setItem('token', token);
-                axios.defaults.headers.common.Authorization = `Bearer ${token}`;
+                todoApi.defaults.headers.common.Authorization = `Bearer ${token}`;
                 onLogin(loggedUser);
                 navigate('/');
             } catch (error) {
