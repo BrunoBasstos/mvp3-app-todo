@@ -1,6 +1,6 @@
 // /src/components/UserList.js
 import React, {useEffect, useState} from 'react';
-import axios from 'axios';
+import { todoApi } from '../axiosConfig';
 import {
     Box,
     Button,
@@ -32,7 +32,7 @@ const UserList = ({loggedUser}) => {
     const [selectedUser, setSelectedUser] = useState(null);
 
     const fetchUsers = async () => {
-        const response = await axios.get('/usuarios');
+        const response = await todoApi.get('/usuarios');
         setUserList(response.data);
     };
 
@@ -48,7 +48,7 @@ const UserList = ({loggedUser}) => {
         }
 
         try {
-            await axios.put(`/usuario`, user);
+            await todoApi.put(`/usuario`, user);
             handleCloseEditDialog();
             fetchUsers();
         } catch (error) {
@@ -65,7 +65,7 @@ const UserList = ({loggedUser}) => {
     };
 
     const handleDeleteUser = async (id) => {
-        await axios.delete(`/usuario`, {data: {id}});
+        await todoApi.delete(`/usuario`, {data: {id}});
         fetchUsers();
     };
 
