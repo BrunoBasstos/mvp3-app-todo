@@ -31,6 +31,7 @@ import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import DatePicker from '@mui/lab/DatePicker';
 import AdapterDateFns from '@mui/lab/AdapterDateFns';
 import LocalizationProvider from '@mui/lab/LocalizationProvider';
+import { debounce } from 'lodash';
 
 const TaskList = ({loggedUser}) => {
     const [tasks, setTasks] = useState([]);
@@ -159,14 +160,14 @@ const TaskList = ({loggedUser}) => {
         return tasks.filter((task) => task.status === status);
     };
 
-    const handleCityInputChange = async (value) => {
+    const handleCityInputChange = debounce(async (value) => {
         try {
             const response = await bridgeApi.get(`/location/search/${value}`);
             setCityOptions(response.data);
         } catch (error) {
             console.error("Erro ao buscar cidades:", error);
         }
-    };
+    }, 750);
 
     const validateForm = () => {
         let formErrors = [];
@@ -235,7 +236,10 @@ const TaskList = ({loggedUser}) => {
                     label="Cidade"
                     fullWidth
                     value={newTask.cidade}
-                    onChange={(e) => handleCityInputChange(e.target.value)}
+                    onChange={(e) => {
+                        setNewTask({...newTask, cidade: e.target.value});
+                        handleCityInputChange(e.target.value);
+                    }}
                 />
                 {weatherData && (
                     <div>
