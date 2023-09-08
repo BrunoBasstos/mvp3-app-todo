@@ -1,5 +1,5 @@
 // /src/components/TaskList.js
-import React, {useState, useEffect} from 'react';
+import React, { useState, useEffect } from 'react';
 import { todoApi, bridgeApi } from '../axiosConfig';
 import {
     Box,
@@ -18,8 +18,8 @@ import {
     MenuItem,
     Tooltip
 } from '@mui/material';
-import {DragDropContext, Droppable, Draggable} from 'react-beautiful-dnd';
-import {toast, ToastContainer} from "react-toastify";
+import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
+import { toast, ToastContainer } from "react-toastify";
 import ErrorToast from "./ErrorToast";
 import LowPriorityIcon from '@mui/icons-material/LowPriority';
 import PriorityHighIcon from '@mui/icons-material/PriorityHigh';
@@ -31,9 +31,8 @@ import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import DatePicker from '@mui/lab/DatePicker';
 import AdapterDateFns from '@mui/lab/AdapterDateFns';
 import LocalizationProvider from '@mui/lab/LocalizationProvider';
-import { debounce } from 'lodash';
 
-const TaskList = ({loggedUser}) => {
+const TaskList = ({ loggedUser }) => {
     const [tasks, setTasks] = useState([]);
     const [prioridadesList, setPrioridadesList] = useState([]);
     const [statusList, setStatusList] = useState([]);
@@ -79,7 +78,7 @@ const TaskList = ({loggedUser}) => {
     };
 
     const moveTask = (taskId, newStatus) => {
-        setTasks((prevTasks) => prevTasks.map((task) => (task.id === taskId ? {...task, status: newStatus} : task)));
+        setTasks((prevTasks) => prevTasks.map((task) => (task.id === taskId ? { ...task, status: newStatus } : task)));
     };
 
     const handleTaskClick = (task) => {
@@ -108,24 +107,24 @@ const TaskList = ({loggedUser}) => {
     const addTask = async () => {
         const formErrors = validateForm();
         if (formErrors.length > 0) {
-            toast.error(<ErrorToast errors={formErrors}/>);
+            toast.error(<ErrorToast errors={formErrors} />);
             return;
         }
 
         await todoApi.post('/tarefa', newTask);
-        setNewTask({titulo: '', descricao: '', status: '', prioridade: '', cidade: '', data_tarefa: new Date()});
+        setNewTask({ titulo: '', descricao: '', status: '', prioridade: '', cidade: '', data_tarefa: new Date() });
         fetchTasks();
         handleClose();
     };
 
     const deleteTask = async (id) => {
-        await todoApi.delete(`/tarefa`, {data: {id: id}});
+        await todoApi.delete(`/tarefa`, { data: { id: id } });
         fetchTasks();
     };
 
     const updateTask = async (id, task, newStatus) => {
         try {
-            await todoApi.put(`/tarefa`, {...task, status: newStatus});
+            await todoApi.put(`/tarefa`, { ...task, status: newStatus });
             fetchTasks();
         } catch (error) {
             console.error('Error updating task:', error);
@@ -142,7 +141,7 @@ const TaskList = ({loggedUser}) => {
     };
 
     const onDragEnd = (result) => {
-        const {destination, source, draggableId} = result;
+        const { destination, source, draggableId } = result;
         if (!destination) {
             return;
         }
@@ -160,14 +159,28 @@ const TaskList = ({loggedUser}) => {
         return tasks.filter((task) => task.status === status);
     };
 
-    const handleCityInputChange = debounce(async (value) => {
+    const fetchCities = async (value) => {
         try {
             const response = await bridgeApi.get(`/location/search/${value}`);
             setCityOptions(response.data);
         } catch (error) {
             console.error("Erro ao buscar cidades:", error);
         }
-    }, 750);
+    };
+
+    let timeoutId;
+    
+    const handleCityInputChange = (value) => {
+        setNewTask({ ...newTask, cidade: value });
+
+        if (timeoutId) {
+            clearTimeout(timeoutId);
+        }
+
+        timeoutId = setTimeout(() => {
+            fetchCities(value);
+        }, 500);
+    };
 
     const validateForm = () => {
         let formErrors = [];
@@ -177,15 +190,15 @@ const TaskList = ({loggedUser}) => {
         if (!newTask.status) formErrors.push('O campo status é obrigatório');
         if (!newTask.cidade || !newTask.data_tarefa) {
             toast.warn(<ErrorToast
-                    errors={['Não será possível exibir a previsão do tempo para essa tarefa porque a cidade e/ou a data não foram preenchidas.']}
-                />
+                errors={['Não será possível exibir a previsão do tempo para essa tarefa porque a cidade e/ou a data não foram preenchidas.']}
+            />
             );
         }
         return formErrors;
     }
 
     return (<Box>
-        <ToastContainer/>
+        <ToastContainer />
         <Typography variant="h4" align="center">
             Lista de Tarefas
         </Typography>
@@ -202,14 +215,14 @@ const TaskList = ({loggedUser}) => {
                     label="Título"
                     fullWidth
                     value={newTask.titulo}
-                    onChange={(e) => setNewTask({...newTask, titulo: e.target.value})}
+                    onChange={(e) => setNewTask({ ...newTask, titulo: e.target.value })}
                 />
                 <TextField
                     margin="dense"
                     label="Descrição"
                     fullWidth
                     value={newTask.descricao}
-                    onChange={(e) => setNewTask({...newTask, descricao: e.target.value})}
+                    onChange={(e) => setNewTask({ ...newTask, descricao: e.target.value })}
                 />
                 <TextField
                     select
@@ -217,7 +230,7 @@ const TaskList = ({loggedUser}) => {
                     label="Prioridade"
                     fullWidth
                     value={newTask.prioridade}
-                    onChange={(e) => setNewTask({...newTask, prioridade: e.target.value})}
+                    onChange={(e) => setNewTask({ ...newTask, prioridade: e.target.value })}
                 >
                     {prioridadesList.map((prioridade) => (<MenuItem key={prioridade} value={prioridade}>
                         {prioridade}
@@ -227,8 +240,8 @@ const TaskList = ({loggedUser}) => {
                     <DatePicker
                         label="Data da Tarefa"
                         value={newTask.data_tarefa}
-                        onChange={(date) => setNewTask({...newTask, data_tarefa: date})}
-                        renderInput={(params) => <TextField {...params} fullWidth/>}
+                        onChange={(date) => setNewTask({ ...newTask, data_tarefa: date })}
+                        renderInput={(params) => <TextField {...params} fullWidth />}
                     />
                 </LocalizationProvider>
                 <TextField
@@ -237,7 +250,7 @@ const TaskList = ({loggedUser}) => {
                     fullWidth
                     value={newTask.cidade}
                     onChange={(e) => {
-                        setNewTask({...newTask, cidade: e.target.value});
+                        setNewTask({ ...newTask, cidade: e.target.value });
                         handleCityInputChange(e.target.value);
                     }}
                 />
@@ -254,7 +267,7 @@ const TaskList = ({loggedUser}) => {
                     label="Status"
                     fullWidth
                     value={newTask.status}
-                    onChange={(e) => setNewTask({...newTask, status: e.target.value})}
+                    onChange={(e) => setNewTask({ ...newTask, status: e.target.value })}
                 >
                     {statusList.map((status) => (<MenuItem key={status} value={status}>
                         {status}
@@ -267,7 +280,7 @@ const TaskList = ({loggedUser}) => {
             </DialogActions>
         </Dialog>
         <DragDropContext onDragEnd={onDragEnd}>
-            <Grid container spacing={2} justifyContent="center" style={{marginTop: '16px'}}>
+            <Grid container spacing={2} justifyContent="center" style={{ marginTop: '16px' }}>
                 {statusList.map((status) => (<Grid item key={status} xs={12} sm={6} md={4}>
                     <Typography variant="h6" align="center">
                         {status} ({getTasksByStatus(status).length})
@@ -301,16 +314,16 @@ const TaskList = ({loggedUser}) => {
                                                     {task.prioridade === 'baixa' && (
                                                         <Tooltip title={task.prioridade}>
                                                             <LowPriorityIcon fontSize="medium"
-                                                                             color="primary"/>
+                                                                color="primary" />
                                                         </Tooltip>)}
                                                     {task.prioridade === 'média' && (
                                                         <Tooltip title={task.prioridade}>
                                                             <PriorityHighIcon fontSize="medium"
-                                                                              color="action"/>
+                                                                color="action" />
                                                         </Tooltip>)}
                                                     {task.prioridade === 'alta' && (
                                                         <Tooltip title={task.prioridade}>
-                                                            <ErrorIcon fontSize="medium" color="error"/>
+                                                            <ErrorIcon fontSize="medium" color="error" />
                                                         </Tooltip>)}
                                                 </Grid>
                                                 <Grid item xs>
@@ -352,7 +365,7 @@ const TaskList = ({loggedUser}) => {
                                             }}>
                                                 <Grid item>
                                                     <Button size="small" color="secondary"
-                                                            onClick={() => deleteTask(task.id)}>
+                                                        onClick={() => deleteTask(task.id)}>
                                                         Excluir
                                                     </Button>
                                                 </Grid>
@@ -363,7 +376,7 @@ const TaskList = ({loggedUser}) => {
                                                         marginRight: '8px',
                                                     }}>
                                                         <Tooltip title={task.usuario.nome}>
-                                                            <AccountCircleIcon fontSize="small"/>
+                                                            <AccountCircleIcon fontSize="small" />
                                                         </Tooltip>
                                                     </Grid>
                                                 </>)}
@@ -385,7 +398,7 @@ const TaskList = ({loggedUser}) => {
                     label="Título"
                     fullWidth
                     value={selectedTask.titulo}
-                    onChange={(e) => setSelectedTask({...selectedTask, titulo: e.target.value})}
+                    onChange={(e) => setSelectedTask({ ...selectedTask, titulo: e.target.value })}
                 />) : (selectedTask?.titulo)}
             </DialogTitle>
             <DialogContent>
@@ -396,7 +409,7 @@ const TaskList = ({loggedUser}) => {
                             multiline
                             fullWidth
                             value={selectedTask.descricao}
-                            onChange={(e) => setSelectedTask({...selectedTask, descricao: e.target.value})}
+                            onChange={(e) => setSelectedTask({ ...selectedTask, descricao: e.target.value })}
                         />
                     </Grid>
                     <Grid item xs={6}>
@@ -405,7 +418,7 @@ const TaskList = ({loggedUser}) => {
                             label="Prioridade"
                             fullWidth
                             value={selectedTask.prioridade}
-                            onChange={(e) => setSelectedTask({...selectedTask, prioridade: e.target.value})}
+                            onChange={(e) => setSelectedTask({ ...selectedTask, prioridade: e.target.value })}
                         >
                             {prioridadesList.map((prioridade) => (<MenuItem key={prioridade} value={prioridade}>
                                 {prioridade}
@@ -418,7 +431,7 @@ const TaskList = ({loggedUser}) => {
                             label="Status"
                             fullWidth
                             value={selectedTask.status}
-                            onChange={(e) => setSelectedTask({...selectedTask, status: e.target.value})}
+                            onChange={(e) => setSelectedTask({ ...selectedTask, status: e.target.value })}
                         >
                             {statusList.map((status) => (<MenuItem key={status} value={status}>
                                 {status}
@@ -429,15 +442,15 @@ const TaskList = ({loggedUser}) => {
             </DialogContent>
             <DialogActions>
                 {editMode ? (<>
-                    <Button onClick={handleCancelEdit} startIcon={<CancelIcon/>}>
+                    <Button onClick={handleCancelEdit} startIcon={<CancelIcon />}>
                         Cancelar
                     </Button>
-                    <Button onClick={handleSaveEdit} startIcon={<SaveIcon/>}>
+                    <Button onClick={handleSaveEdit} startIcon={<SaveIcon />}>
                         Salvar
                     </Button>
                 </>) : (<>
                     <Button onClick={handleCloseDetails}>Fechar</Button>
-                    <Button onClick={handleEditTask} startIcon={<EditIcon/>}>
+                    <Button onClick={handleEditTask} startIcon={<EditIcon />}>
                         Editar
                     </Button>
                 </>)}
