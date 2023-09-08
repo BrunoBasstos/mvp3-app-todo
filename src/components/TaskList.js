@@ -1,6 +1,6 @@
 // /src/components/TaskList.js
 import React, {useState, useEffect} from 'react';
-import axios from 'axios';
+import { todoApi, bridgeApi } from '../axiosConfig';
 import {
     Box,
     Card,
@@ -53,7 +53,8 @@ const TaskList = ({loggedUser}) => {
         if (newTask.cidade && newTask.data_tarefa) {
             const fetchWeatherData = async () => {
                 try {
-                    const response = await axios.get(`/api-bridge/weather?city=${selectedTask.cidade}&date=${selectedTask.data_tarefa}`);
+                    // const response = await bridgeApi.get(`/weather/${selectedTask.cidade}&date=${selectedTask.data_tarefa}`);
+                    const response = await bridgeApi.get(`/weather/${selectedTask.cidade}`);
                     setWeatherData(response.data);
                 } catch (error) {
                     console.error("Erro ao buscar previsão do tempo:", error);
@@ -89,17 +90,17 @@ const TaskList = ({loggedUser}) => {
     };
 
     const fetchPrioridades = async () => {
-        const response = await axios.get('/prioridade');
+        const response = await todoApi.get('/prioridade');
         setPrioridadesList(response.data);
     };
 
     const fetchStatus = async () => {
-        const response = await axios.get('/status');
+        const response = await todoApi.get('/status');
         setStatusList(response.data);
     };
 
     const fetchTasks = async () => {
-        const response = await axios.get('/tarefas');
+        const response = await todoApi.get('/tarefas');
         setTasks(response.data);
     };
 
@@ -110,20 +111,20 @@ const TaskList = ({loggedUser}) => {
             return;
         }
 
-        await axios.post('/tarefa', newTask);
+        await todoApi.post('/tarefa', newTask);
         setNewTask({titulo: '', descricao: '', status: '', prioridade: '', cidade: '', data_tarefa: new Date()});
         fetchTasks();
         handleClose();
     };
 
     const deleteTask = async (id) => {
-        await axios.delete(`/tarefa`, {data: {id: id}});
+        await todoApi.delete(`/tarefa`, {data: {id: id}});
         fetchTasks();
     };
 
     const updateTask = async (id, task, newStatus) => {
         try {
-            await axios.put(`/tarefa`, {...task, status: newStatus});
+            await todoApi.put(`/tarefa`, {...task, status: newStatus});
             fetchTasks();
         } catch (error) {
             console.error('Error updating task:', error);
@@ -160,7 +161,7 @@ const TaskList = ({loggedUser}) => {
 
     const handleCityInputChange = async (value) => {
         try {
-            const response = await axios.get(`/api-bridge/cities?name=${value}`);
+            const response = await bridgeApi.get(`/location/search/${value}`);
             setCityOptions(response.data);
         } catch (error) {
             console.error("Erro ao buscar cidades:", error);
