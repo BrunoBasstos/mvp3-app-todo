@@ -29,9 +29,9 @@ import EditIcon from "@mui/icons-material/Edit";
 import SaveIcon from "@mui/icons-material/Save";
 import CancelIcon from "@mui/icons-material/Cancel";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
-import DatePicker from "@mui/lab/DatePicker";
-import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
-import { LocalizationProvider } from '@mui/x-date-pickers';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 
 const TaskList = ({ loggedUser }) => {
   const [tasks, setTasks] = useState([]);
@@ -277,22 +277,22 @@ const TaskList = ({ loggedUser }) => {
               </MenuItem>
             ))}
           </TextField>
-          <LocalizationProvider dateAdapter={AdapterDateFns}>
-              <DatePicker
-                label="Data da Tarefa"
-                value={newTask.data_tarefa}
-                onChange={(date) =>
-                  setNewTask({ ...newTask, data_tarefa: date })
-                }
-                renderInput={(params) => (
-                  <TextField
-                    {...params}
-                    variant="outlined"
-                    margin="dense"
-                    fullWidth
-                  />
-                )}
-              />
+          <LocalizationProvider dateAdapter={AdapterDayjs}>
+            <DatePicker
+              label="Data da Tarefa"
+              value={newTask.data_tarefa}
+              onChange={(date) =>
+                setNewTask({ ...newTask, data_tarefa: date })
+              }
+            // renderInput={(params) => (
+            //   <TextField
+            //     {...params}
+            //     variant="outlined"
+            //     margin="dense"
+            //     fullWidth
+            //   />
+            // )}
+            />
           </LocalizationProvider>
           <Autocomplete
             options={cityOptions}
