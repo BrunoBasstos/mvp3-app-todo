@@ -11,7 +11,7 @@ import {createTheme, ThemeProvider} from '@mui/material/styles';
 import {CssBaseline} from '@mui/material';
 
 function App() {
-    const [isLoggedIn, setIsLoggedIn] = useState(false);
+    const [isLoggedIn, setIsLoggedIn] = useState(localStorage.getItem('token') !== null);
     const [loggedUser, setLoggedUser] = useState({});
     const [darkMode, setDarkMode] = useState(() => {
         const localDarkMode = localStorage.getItem('darkMode');
@@ -33,8 +33,8 @@ function App() {
     useEffect(() => {
         const token = localStorage.getItem('token');
         if (token) {
-            todoApi.defaults.headers.common.Authorization = `Bearer ${token}`;
             setIsLoggedIn(true);
+            todoApi.defaults.headers.common.Authorization = `Bearer ${token}`;
             todoApi.get("/auth")
                 .then((response) => {
                     setIsLoggedIn(true);
@@ -56,6 +56,7 @@ function App() {
     const handleLogin = (usuario) => {
         setIsLoggedIn(true);
         setLoggedUser(usuario);
+        window.location.reload();
     };
 
     const handleLogout = () => {
@@ -68,7 +69,6 @@ function App() {
         <ThemeProvider theme={theme}>
             <CssBaseline/>
             <Router>
-
                 <div>
                     {isLoggedIn &&
                         <Header isLoggedIn={isLoggedIn} loggedUser={loggedUser} handleLogout={handleLogout}
@@ -79,6 +79,7 @@ function App() {
                             {isLoggedIn ? (
                                 <>
                                     <Route path="/" element={<TaskList loggedUser={loggedUser}/>}/>
+
                                     {loggedUser?.perfil === 'administrador' && (
                                         <Route path="/usuarios" element={<UserList loggedUser={loggedUser}/>}/>
                                     )}
