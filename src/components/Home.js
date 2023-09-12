@@ -40,9 +40,9 @@ const Home = ({onLogin, toggleDarkMode}) => {
                         Engenharia de Software da PUC-RIO
                     </Typography>
                     {showRegister ? (
-                        <Register handleRegister={handleRegister} navigate={toggleForm}/>
+                        <Register handleRegister={handleRegister} toggleForm={toggleForm}/>
                     ) : (
-                        <Login onLogin={onLogin} navigate={toggleForm}/>
+                        <Login onLogin={onLogin} toggleForm={toggleForm}/>
                     )}
                 </Box>
                 <Typography variant="body1" align="center" gutterBottom mt={2}>
