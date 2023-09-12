@@ -2,37 +2,24 @@
 import React, {useState, useEffect} from "react";
 import {todoApi, bridgeApi} from "../axiosConfig";
 import {
-    Autocomplete,
     Box,
-    Card,
-    CardContent,
-    CardActions,
     Button,
-    TextField,
     Typography,
     Dialog,
     DialogActions,
     DialogContent,
-    DialogContentText,
     DialogTitle,
     Grid,
-    MenuItem,
-    Tooltip,
 } from "@mui/material";
 import {DragDropContext, Droppable, Draggable} from "react-beautiful-dnd";
 import {toast, ToastContainer} from "react-toastify";
 import ErrorToast from "./ErrorToast";
-import LowPriorityIcon from "@mui/icons-material/LowPriority";
-import PriorityHighIcon from "@mui/icons-material/PriorityHigh";
-import ErrorIcon from "@mui/icons-material/Error";
-import EditIcon from "@mui/icons-material/Edit";
-import SaveIcon from "@mui/icons-material/Save";
-import CancelIcon from "@mui/icons-material/Cancel";
-import AccountCircleIcon from "@mui/icons-material/AccountCircle";
-import {AdapterDayjs} from '@mui/x-date-pickers/AdapterDayjs';
-import {LocalizationProvider} from '@mui/x-date-pickers/LocalizationProvider';
-import {DatePicker} from '@mui/x-date-pickers/DatePicker';
 import dayjs from "dayjs";
+
+import TaskCard from "./TaskCard";
+import TaskDetails from './TaskDetails';
+import TaskDialogForm from './TaskDialogForm';
+
 
 const TaskList = ({loggedUser}) => {
     const [tasks, setTasks] = useState([]);
@@ -50,29 +37,14 @@ const TaskList = ({loggedUser}) => {
     const [open, setOpen] = useState(false);
     const [editMode, setEditMode] = useState(false);
     const [cityOptions, setCityOptions] = useState([]);
-    const [weatherData, setWeatherData] = useState(null);
     const [citySearch, setCitySearch] = useState("");
+    const [isSelectedCity, setIsSelectedCity] = useState(false);
 
     useEffect(() => {
         fetchPrioridades();
         fetchStatus();
         fetchTasks();
-        //se tem cidade e data, busca o clima
-        if (newTask.cidade && newTask.data_tarefa) {
-            const fetchWeatherData = async () => {
-                try {
-                    // const response = await bridgeApi.get(`/weather/${selectedTask.cidade}&date=${selectedTask.data_tarefa}`);
-                    const response = await bridgeApi.get(
-                        `/weather/${selectedTask.cidade}`
-                    );
-                    setWeatherData(response.data);
-                } catch (error) {
-                    console.error("Erro ao buscar previsão do tempo:", error);
-                }
-            };
-            fetchWeatherData();
-        }
-    }, []);
+    }, [loggedUser]);
 
     const handleEditTask = () => {
         setEditMode(true);
@@ -100,6 +72,7 @@ const TaskList = ({loggedUser}) => {
     };
 
     const handleCloseDetails = () => {
+        setEditMode(false);
         setSelectedTask(null);
     };
 
@@ -115,8 +88,25 @@ const TaskList = ({loggedUser}) => {
 
     const fetchTasks = async () => {
         const response = await todoApi.get("/tarefas");
-        setTasks(response.data);
+        let tmpTasks = response.data;
+
+        const weatherPromises = tmpTasks.map(async (task) => {
+            if(!task.cidade) return task;
+
+            if (dayjs(task.data_tarefa).isSame(dayjs(), "day")) {
+                const response = await bridgeApi.get(`/weather/${task.cidade}`);
+                task.weather = response.data;
+            } else if (dayjs(task.data_tarefa).isAfter(dayjs(), "day")) {
+                const response = await bridgeApi.get(`/forecast/${task.cidade}`);
+                task.weather = response.data;
+            }
+            return task;
+        });
+
+        const updatedTasks = await Promise.all(weatherPromises);
+        setTasks(updatedTasks);
     };
+
 
     const addTask = async () => {
         const formErrors = validateForm();
@@ -194,7 +184,7 @@ const TaskList = ({loggedUser}) => {
 
     useEffect(() => {
         const timer = setTimeout(() => {
-            if (citySearch) {
+            if (citySearch && !isSelectedCity) {
                 fetchCities(citySearch);
             }
         }, 500);
@@ -204,8 +194,7 @@ const TaskList = ({loggedUser}) => {
 
     const handleCityInputChange = (value) => {
         setCitySearch(value);
-        setNewTask({...newTask, cidade: value});
-
+        setIsSelectedCity(false);
         if (!value) {
             setCityOptions([]);
         }
@@ -218,6 +207,7 @@ const TaskList = ({loggedUser}) => {
         if (!newTask.prioridade)
             formErrors.push("O campo prioridade é obrigatório");
         if (!newTask.status) formErrors.push("O campo status é obrigatório");
+
         if (!newTask.cidade || !newTask.data_tarefa) {
             toast.warn(
                 <ErrorToast
@@ -242,111 +232,13 @@ const TaskList = ({loggedUser}) => {
             <Dialog open={open} onClose={handleClose}>
                 <DialogTitle>Adicionar Tarefa</DialogTitle>
                 <DialogContent>
-                    <DialogContentText>
-                        Preencha os campos abaixo para adicionar uma nova tarefa.
-                    </DialogContentText>
-                    <TextField
-                        autoFocus
-                        margin="dense"
-                        label="Título"
-                        fullWidth
-                        value={newTask.titulo}
-                        onChange={(e) => setNewTask({...newTask, titulo: e.target.value})}
-                    />
-                    <TextField
-                        margin="dense"
-                        label="Descrição"
-                        fullWidth
-                        value={newTask.descricao}
-                        onChange={(e) =>
-                            setNewTask({...newTask, descricao: e.target.value})
-                        }
-                    />
-                    <TextField
-                        select
-                        margin="dense"
-                        label="Prioridade"
-                        fullWidth
-                        value={newTask.prioridade}
-                        onChange={(e) =>
-                            setNewTask({...newTask, prioridade: e.target.value})
-                        }
-                    >
-                        {prioridadesList.map((prioridade) => (
-                            <MenuItem key={prioridade} value={prioridade}>
-                                {prioridade}
-                            </MenuItem>
-                        ))}
-                    </TextField>
-                    <TextField
-                        select
-                        margin="dense"
-                        label="Status"
-                        fullWidth
-                        style={{marginBottom: "12px"}}
-                        value={newTask.status}
-                        onChange={(e) => setNewTask({...newTask, status: e.target.value})}
-                    >
-                        {statusList.map((status) => (
-                            <MenuItem key={status} value={status}>
-                                {status}
-                            </MenuItem>
-                        ))}
-                    </TextField>
-                    <LocalizationProvider dateAdapter={AdapterDayjs}>
-                        <DatePicker
-                            label="Data da Tarefa"
-                            value={dayjs(newTask.data_tarefa)}
-                            onChange={(date) =>
-                                setNewTask({...newTask, data_tarefa: date})
-                            }
-                        />
-                    </LocalizationProvider>
-                    <Autocomplete
-                        options={cityOptions}
-                        getOptionLabel={(option) => option.name}
-                        renderOption={(props, option) => (
-                            <Box
-                                component="li"
-                                sx={{"& > img": {mr: 2, flexShrink: 0}}}
-                                {...props}
-                            >
-                                <Box sx={{flexGrow: 1}}>
-                                    <Typography variant="h6" component="h6" color="text.primary">
-                                        {option.name}
-                                    </Typography>
-                                    <Typography
-                                        variant="subtitle2"
-                                        component="p"
-                                        color="text.secondary"
-                                    >
-                                        {option.state}, {option.country}
-                                        <img
-                                            loading="lazy"
-                                            width="20"
-                                            src={`https://flagcdn.com/w20/${option.country.toLowerCase()}.png`}
-                                            srcSet={`https://flagcdn.com/w40/${option.country.toLowerCase()}.png 2x`}
-                                            alt=""
-                                            style={{marginLeft: "3px"}}
-                                        />
-                                    </Typography>
-                                </Box>
-                            </Box>
-                        )}
-                        onChange={(e, value) =>
-                            setNewTask({...newTask, cidade: value.id})
-                        }
-                        onInputChange={(e, value) => handleCityInputChange(value)}
-                        renderInput={(params) => (
-                            <TextField
-                                {...params}
-                                label="Cidade"
-                                variant="outlined"
-                                margin="dense"
-                                fullWidth
-                                style={{marginTop: "12px"}}
-                            />
-                        )}
+                    <TaskDialogForm
+                        task={newTask}
+                        setTask={setNewTask}
+                        prioridadesList={prioridadesList}
+                        statusList={statusList}
+                        cityOptions={cityOptions}
+                        handleCityInputChange={handleCityInputChange}
                     />
                 </DialogContent>
                 <DialogActions>
@@ -354,6 +246,7 @@ const TaskList = ({loggedUser}) => {
                     <Button onClick={addTask}>Adicionar</Button>
                 </DialogActions>
             </Dialog>
+
             <DragDropContext onDragEnd={onDragEnd}>
                 <Grid
                     container
@@ -377,131 +270,14 @@ const TaskList = ({loggedUser}) => {
                                         p={1}
                                     >
                                         {getTasksByStatus(status).map((task, index) => (
-                                            <Draggable
+                                            <TaskCard
                                                 key={task.id}
-                                                draggableId={task.id.toString()}
+                                                task={task}
                                                 index={index}
-                                            >
-                                                {(provided) => (
-                                                    <Card
-                                                        ref={provided.innerRef}
-                                                        {...provided.draggableProps}
-                                                        {...provided.dragHandleProps}
-                                                        style={{
-                                                            ...provided.draggableProps.style,
-                                                            marginBottom: "8px",
-                                                        }}
-                                                    >
-                                                        <CardContent>
-                                                            <Grid container alignItems="center">
-                                                                <Grid
-                                                                    item
-                                                                    sx={{
-                                                                        display: "flex",
-                                                                        alignItems: "center",
-                                                                        marginRight: "8px",
-                                                                    }}
-                                                                >
-                                                                    {task.prioridade === "baixa" && (
-                                                                        <Tooltip title={task.prioridade}>
-                                                                            <LowPriorityIcon
-                                                                                fontSize="medium"
-                                                                                color="primary"
-                                                                            />
-                                                                        </Tooltip>
-                                                                    )}
-                                                                    {task.prioridade === "média" && (
-                                                                        <Tooltip title={task.prioridade}>
-                                                                            <PriorityHighIcon
-                                                                                fontSize="medium"
-                                                                                color="action"
-                                                                            />
-                                                                        </Tooltip>
-                                                                    )}
-                                                                    {task.prioridade === "alta" && (
-                                                                        <Tooltip title={task.prioridade}>
-                                                                            <ErrorIcon
-                                                                                fontSize="medium"
-                                                                                color="error"
-                                                                            />
-                                                                        </Tooltip>
-                                                                    )}
-                                                                </Grid>
-                                                                <Grid item xs>
-                                                                    <Typography
-                                                                        variant="h6"
-                                                                        component="div"
-                                                                        noWrap
-                                                                        sx={{
-                                                                            textOverflow: "ellipsis",
-                                                                            overflow: "hidden",
-                                                                            maxHeight: "3em", // Limite a altura para, por exemplo, 3 linhas
-                                                                            cursor: "pointer",
-                                                                        }}
-                                                                        onClick={() => handleTaskClick(task)}
-                                                                    >
-                                                                        {task.titulo}
-                                                                    </Typography>
-                                                                </Grid>
-                                                            </Grid>
-                                                            <Typography
-                                                                variant="body2"
-                                                                component="div"
-                                                                noWrap
-                                                                sx={{
-                                                                    textOverflow: "ellipsis",
-                                                                    overflow: "hidden",
-                                                                    maxHeight: "3em", // Limite a altura para, por exemplo, 3 linhas
-                                                                    cursor: "pointer",
-                                                                }}
-                                                                onClick={() => handleTaskClick(task)}
-                                                            >
-                                                                {task.descricao}
-                                                            </Typography>
-                                                        </CardContent>
-
-                                                        <CardActions>
-                                                            <Grid
-                                                                container
-                                                                alignItems="center"
-                                                                sx={{
-                                                                    display: "flex",
-                                                                    justifyContent: "space-between",
-                                                                }}
-                                                            >
-                                                                <Grid item>
-                                                                    <Button
-                                                                        size="small"
-                                                                        color="secondary"
-                                                                        onClick={() => deleteTask(task.id)}
-                                                                    >
-                                                                        Excluir
-                                                                    </Button>
-                                                                </Grid>
-                                                                {loggedUser.perfil === "administrador" &&
-                                                                    task.usuario.id !== loggedUser.id && (
-                                                                        <>
-                                                                            <Grid
-                                                                                item
-                                                                                sx={{
-                                                                                    display: "flex",
-                                                                                    alignItems: "center",
-                                                                                    marginRight: "8px",
-                                                                                }}
-                                                                            >
-                                                                                <Tooltip title={task.usuario.nome}>
-                                                                                    <AccountCircleIcon
-                                                                                        fontSize="small"/>
-                                                                                </Tooltip>
-                                                                            </Grid>
-                                                                        </>
-                                                                    )}
-                                                            </Grid>
-                                                            {/* ícone de usuário com o nome do dono da tarefa */}
-                                                        </CardActions>
-                                                    </Card>
-                                                )}
-                                            </Draggable>
+                                                deleteTask={deleteTask}
+                                                handleTaskClick={handleTaskClick}
+                                                loggedUser={loggedUser}
+                                            />
                                         ))}
                                         {provided.placeholder}
                                     </Box>
@@ -511,105 +287,35 @@ const TaskList = ({loggedUser}) => {
                     ))}
                 </Grid>
             </DragDropContext>
-            <Dialog
-                open={Boolean(selectedTask)}
-                onClose={handleCloseDetails}
-                fullWidth
-                maxWidth="sm"
-            >
-                <DialogTitle>
-                    {editMode ? (
-                        <TextField
-                            label="Título"
-                            fullWidth
-                            value={selectedTask.titulo}
-                            onChange={(e) =>
-                                setSelectedTask({...selectedTask, titulo: e.target.value})
-                            }
-                        />
-                    ) : (
-                        selectedTask?.titulo
-                    )}
-                </DialogTitle>
-                <DialogContent>
-                    {editMode ? (
-                        <Grid container spacing={2} mt={1}>
-                            <Grid item xs={12}>
-                                <TextField
-                                    label="Descrição"
-                                    multiline
-                                    fullWidth
-                                    value={selectedTask.descricao}
-                                    onChange={(e) =>
-                                        setSelectedTask({
-                                            ...selectedTask,
-                                            descricao: e.target.value,
-                                        })
-                                    }
-                                />
-                            </Grid>
-                            <Grid item xs={6}>
-                                <TextField
-                                    select
-                                    label="Prioridade"
-                                    fullWidth
-                                    value={selectedTask.prioridade}
-                                    onChange={(e) =>
-                                        setSelectedTask({
-                                            ...selectedTask,
-                                            prioridade: e.target.value,
-                                        })
-                                    }
-                                >
-                                    {prioridadesList.map((prioridade) => (
-                                        <MenuItem key={prioridade} value={prioridade}>
-                                            {prioridade}
-                                        </MenuItem>
-                                    ))}
-                                </TextField>
-                            </Grid>
-                            <Grid item xs={6}>
-                                <TextField
-                                    select
-                                    label="Status"
-                                    fullWidth
-                                    value={selectedTask.status}
-                                    onChange={(e) =>
-                                        setSelectedTask({...selectedTask, status: e.target.value})
-                                    }
-                                >
-                                    {statusList.map((status) => (
-                                        <MenuItem key={status} value={status}>
-                                            {status}
-                                        </MenuItem>
-                                    ))}
-                                </TextField>
-                            </Grid>
-                        </Grid>
-                    ) : (
-                        <DialogContentText>{selectedTask?.descricao}</DialogContentText>
-                    )}
-                </DialogContent>
-                <DialogActions>
-                    {editMode ? (
-                        <>
-                            <Button onClick={handleCancelEdit} startIcon={<CancelIcon/>}>
-                                Cancelar
-                            </Button>
-                            <Button onClick={handleSaveEdit} startIcon={<SaveIcon/>}>
-                                Salvar
-                            </Button>
-                        </>
-                    ) : (
-                        <>
-                            <Button onClick={handleCloseDetails}>Fechar</Button>
-                            <Button onClick={handleEditTask} startIcon={<EditIcon/>}>
-                                Editar
-                            </Button>
-                        </>
-                    )}
-                </DialogActions>
+            <Dialog open={Boolean(selectedTask)} onClose={handleCloseDetails} fullWidth maxWidth="sm">
+                {editMode ? (
+                    <>
+                        <DialogTitle>Editar Tarefa</DialogTitle>
+                        <DialogContent>
+
+                            <TaskDialogForm
+                                task={selectedTask}
+                                setTask={setSelectedTask}
+                                prioridadesList={prioridadesList}
+                                statusList={statusList}
+                                cityOptions={cityOptions}
+                                handleCityInputChange={handleCityInputChange}
+                            />
+                        </DialogContent>
+                        <DialogActions>
+                            <Button onClick={handleCancelEdit}>Cancelar</Button>
+                            <Button onClick={handleSaveEdit}>Salvar</Button>
+                        </DialogActions>
+                    </>
+                ) : (
+                    <TaskDetails
+                        selectedTask={selectedTask}
+                        handleEdit={() => setEditMode(true)}
+                        handleClose={() => setSelectedTask(null)}
+                    />
+                )}
             </Dialog>
+
         </Box>
     );
 };
