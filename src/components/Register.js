@@ -1,12 +1,12 @@
 // /src/components/Register.js
 import React, {useState} from 'react';
-import { todoApi } from '../axiosConfig';
+import {todoApi} from '../axiosConfig';
 import {Box, TextField, Button, Typography, Grid} from '@mui/material';
 import 'react-toastify/dist/ReactToastify.css';
 import {toast, ToastContainer} from 'react-toastify';
 import ErrorToast from './ErrorToast';
 
-const Register = ({handleRegister, navigate}) => {
+const Register = ({handleRegister, toggleForm}) => {
     const [formData, setFormData] = useState({
         nome: '',
         email: '',
@@ -121,7 +121,7 @@ const Register = ({handleRegister, navigate}) => {
                     <Typography variant="body2" align="center">
                         Já possui uma conta?
                         {' '}
-                        <Button onClick={navigate} color="primary">
+                        <Button onClick={toggleForm} color="primary">
                             Acesse agora
                         </Button>
                     </Typography>
