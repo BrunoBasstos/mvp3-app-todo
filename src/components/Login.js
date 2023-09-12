@@ -1,11 +1,11 @@
-// /src/components/ErrorToast.js
+// /src/components/Login.js
 import React, {useState} from 'react';
-import { todoApi } from '../axiosConfig';
+import {todoApi} from '../axiosConfig';
 import {Box, TextField, Button, Typography} from '@mui/material';
 import {toast, ToastContainer} from "react-toastify";
 import ErrorToast from "./ErrorToast";
 
-const Login = ({onLogin, navigate}) => {
+const Login = ({onLogin, toggleForm}) => {
     const [formData, setFormData] = useState({
         email: '',
         senha: '',
@@ -37,7 +37,6 @@ const Login = ({onLogin, navigate}) => {
                 localStorage.setItem('token', token);
                 todoApi.defaults.headers.common.Authorization = `Bearer ${token}`;
                 onLogin(loggedUser);
-                navigate('/');
             } catch (error) {
                 let loginErrors = [];
                 if (error.response && error.response.data) {
@@ -90,7 +89,7 @@ const Login = ({onLogin, navigate}) => {
                     <Typography variant="body2" align="center">
                         Não possui uma conta?
                         {' '}
-                        <Button onClick={navigate} color="primary">
+                        <Button onClick={toggleForm} color="primary">
                             Cadastre-se
                         </Button>
                     </Typography>
