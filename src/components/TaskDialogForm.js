@@ -6,25 +6,33 @@ import {
     TextField,
     MenuItem, Box, Typography,
 } from "@mui/material";
-
 import dayjs from 'dayjs';
-
 import {AdapterDayjs} from '@mui/x-date-pickers/AdapterDayjs';
 import {LocalizationProvider} from '@mui/x-date-pickers/LocalizationProvider';
 import {DatePicker} from '@mui/x-date-pickers/DatePicker';
+import {toast, ToastContainer} from "react-toastify";
+import ErrorToast from "./ErrorToast";
 
 function CityAutocomplete(props) {
     let selectedCity = null;
-    if (props.cityOptions.length === 0 && props.task?.cidade) {
-        selectedCity = { unique_id: props.task.cidade };
+    let cityOptions = props.cityOptions;
+    // //if props.cityOptions is undefined, so, most likely, the api bridge lacks it's key
+    if (props.cityOptions?.unique_id === null) {
+        toast.error(<ErrorToast errors={["Erro ao buscar a cidade. Verifique a chave da API."]} />);
+        cityOptions = [];
     } else {
-        selectedCity = props.cityOptions.find(city => city.unique_id === props.task?.cidade);
+        if (props.cityOptions.length === 0 && props.task?.cidade) {
+            selectedCity = {unique_id: props.task.cidade};
+        } else {
+            // console.log("props.cityOptions", props.cityOptions.length, props.cityOptions, props.task?.cidade)
+            selectedCity = props.cityOptions.find(city => city.unique_id === props.task?.cidade);
+        }
     }
 
     return (
         <Autocomplete
             id="combo-box-autocomplete"
-            options={props.cityOptions}
+            options={cityOptions}
             value={selectedCity}
             getOptionLabel={(option) => option.unique_id}
             style={{marginTop: "12px"}}
