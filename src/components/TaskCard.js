@@ -12,9 +12,9 @@ import {
     Tooltip,
 } from "@mui/material";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
-import LowPriorityIcon from "@mui/icons-material/LowPriority";
-import PriorityHighIcon from "@mui/icons-material/PriorityHigh";
-import ErrorIcon from "@mui/icons-material/Error";
+import CloudOffIcon from '@mui/icons-material/CloudOff';
+import DoubleArrowIcon from '@mui/icons-material/DoubleArrow';
+
 
 function TaskCard({task, index, deleteTask, handleTaskClick, loggedUser}) {
     return (
@@ -39,30 +39,16 @@ function TaskCard({task, index, deleteTask, handleTaskClick, loggedUser}) {
                                     marginRight: "8px",
                                 }}
                             >
-                                {task.prioridade === "baixa" && (
-                                    <Tooltip title={task.prioridade}>
-                                        <LowPriorityIcon
-                                            fontSize="medium"
-                                            color="primary"
-                                        />
-                                    </Tooltip>
-                                )}
-                                {task.prioridade === "média" && (
-                                    <Tooltip title={task.prioridade}>
-                                        <PriorityHighIcon
-                                            fontSize="medium"
-                                            color="action"
-                                        />
-                                    </Tooltip>
-                                )}
-                                {task.prioridade === "alta" && (
-                                    <Tooltip title={task.prioridade}>
-                                        <ErrorIcon
-                                            fontSize="medium"
-                                            color="error"
-                                        />
-                                    </Tooltip>
-                                )}
+                                <Tooltip title={task.prioridade}>
+                                    <DoubleArrowIcon
+                                        fontSize="medium"
+                                        color={task.prioridade === 'alta'
+                                            ? 'error'
+                                            : (task.prioridade === 'média'
+                                                ? 'warning'
+                                                : 'primary')}
+                                    />
+                                </Tooltip>
                             </Grid>
                             <Grid item xs>
                                 <Typography
@@ -80,46 +66,45 @@ function TaskCard({task, index, deleteTask, handleTaskClick, loggedUser}) {
                                     {task.titulo}
                                 </Typography>
                             </Grid>
-                            <Grid
-                                item
-                                alignItems={"center"}
-                                justifyContent={"space-between"}
-                                sx={{
-                                    display: "flex",
-                                    alignItems: "center",
-                                    marginRight: "8px",
-                                }}
-                            >
-                                {task.weather?.error && (
-                                    task.weather.error === "--" ? (
-                                        <Tooltip title={task.weather.error}>
-                                            <img
-                                                loading="lazy"
-                                                width="48"
-                                                src={`http://openweathermap.org/img/w/04d.png`}
-                                                alt={`${task.weather.error}`}
-                                                style={{marginLeft: "3px"}}
-                                            />
-                                        </Tooltip>
-                                    ) : (
+                            {(task.data_tarefa && new Date(task.data_tarefa) < new Date() || task.cidade === null || task?.data_conclusao) && (
+                                <Grid item>
+                                    <Tooltip
+                                        title={task.data_conclusao ? 'Tarefa concluída' : (task.cidade === null ? 'Cidade não informada' : 'Tarefa vencida')}
+                                    >
+                                        <CloudOffIcon
+                                            fontSize="medium"
+                                            color={task.data_conclusao ? 'success' : (task.cidade === null ? 'error' : 'disabled')}
+                                        />
+                                    </Tooltip>
+                                </Grid>
+                            ) || (
+                                <Grid
+                                    item
+                                    sx={{
+                                        display: "flex",
+                                        alignItems: "center",
+                                        justifyContent: "space-between",
+                                        width: "100%"
+                                    }}
+                                >
+                                    {task.weather?.error && (
                                         <Tooltip
-                                            title={'teste:' + task.weather.error}>
-                                            <ErrorIcon
+                                            title={task.weather.error === "--" ? task.weather.error : `Error: ${task.weather.error}`}
+                                        >
+                                            <CloudOffIcon
                                                 fontSize="medium"
                                                 color="error"
                                             />
                                         </Tooltip>
-                                    )
-                                )}
-                                {task.weather?.forecast ? (
-                                    task.weather.forecast.map((day, index) => (
-                                        <Grid container xs={3} alignItems={"center"} spacingX={2} key={index + '' + day.dt}>
-                                            <Grid item>
+                                    )}
+
+                                    {task.weather?.forecast ? (
+                                        task.weather.forecast.map((day, index) => (
+                                            <Grid item key={index + '-' + day.dt} marginTop={"8px"}>
                                                 <Typography variant="body2" fontSize={"11px"}>
                                                     {new Date(day.dt * 1000).toLocaleDateString()}
                                                 </Typography>
-                                            </Grid>
-                                            <Grid item>
+
                                                 <Tooltip
                                                     key={day.dt}
                                                     title={`${day.description} - Temp: ${day.temp}°C`}>
@@ -128,37 +113,34 @@ function TaskCard({task, index, deleteTask, handleTaskClick, loggedUser}) {
                                                         width="48"
                                                         src={`http://openweathermap.org/img/w/${day.icon}.png`}
                                                         alt={`${day.description}`}
-                                                        style={{marginLeft: "3px"}}
                                                     />
                                                 </Tooltip>
                                             </Grid>
-                                        </Grid>
-                                    ))
-                                ) : (
-                                    task.weather?.weather && (
-                                        <Grid container alignItems="center" spacing={1}>
+                                        ))
+                                    ) : (
+                                        task?.weather && (
                                             <Grid item>
-                                                <Typography variant="body2">
+                                                <Typography variant="body2" fontSize={"11px"}>
                                                     Hoje
                                                 </Typography>
-                                            </Grid>
-                                            <Grid item>
                                                 <Tooltip
-                                                    title={`${task.weather?.weather[0].description} - Temp: ${task.weather?.weather[0].temp}°C`}>
+                                                    key={task.weather.dt}
+                                                    title={`${task.weather.description} - Temp: ${task.weather.temp}°C`}>
                                                     <img
                                                         loading="lazy"
                                                         width="48"
-                                                        src={`http://openweathermap.org/img/w/${task.weather?.weather[0].icon}.png`}
-                                                        alt={`${task.weather?.weather[0].description}`}
+                                                        src={`http://openweathermap.org/img/w/${task.weather.icon}.png`}
+                                                        alt={`${task.weather.description}`}
                                                         style={{marginLeft: "3px"}}
                                                     />
                                                 </Tooltip>
                                             </Grid>
-                                        </Grid>
-                                    )
-                                )}
-                            </Grid>
+                                        )
+                                    )}
+                                </Grid>
+                            )}
                         </Grid>
+
                         <Typography
                             variant="body2"
                             component="div"
@@ -173,8 +155,21 @@ function TaskCard({task, index, deleteTask, handleTaskClick, loggedUser}) {
                         >
                             {task.descricao}
                         </Typography>
+                        {(task.data_tarefa || task.cidade) && (
+                            <Typography
+                                variant="body2"
+                                component="div"
+                                noWrap
+                                fontSize={"10px"}
+                                fontStyle={"italic"}
+                                marginTop={"8px"}
+                                textAlign={"right"}
+                            >
+                                {task?.cidade ? task.cidade + ' - ' : ''}
+                                {task?.data_tarefa ? new Date(task.data_tarefa).toLocaleDateString() : ''}
+                            </Typography>
+                        )}
                     </CardContent>
-
                     <CardActions>
                         <Grid
                             container
