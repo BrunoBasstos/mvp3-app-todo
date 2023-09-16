@@ -33,11 +33,11 @@ function CityAutocomplete(props) {
         <Autocomplete
             id="combo-box-autocomplete"
             options={cityOptions}
-            value={selectedCity}
+            value={selectedCity || null}
             getOptionLabel={(option) => option.unique_id}
             style={{marginTop: "12px"}}
             onChange={(e, value) => {
-                props.setTask({...props.task, cidade: value.unique_id});
+                props.setTask({...props.task, cidade: value ? value.unique_id : null});
             }}
             renderInput={(params) => (
                 <TextField
@@ -89,6 +89,7 @@ function TaskDialogForm({task, setTask, prioridadesList, statusList, cityOptions
                 fullWidth
                 value={task.titulo}
                 onChange={(e) => setTask({...task, titulo: e.target.value})}
+                autoComplete="off"
             />
             <TextField
                 margin="dense"
@@ -96,6 +97,7 @@ function TaskDialogForm({task, setTask, prioridadesList, statusList, cityOptions
                 fullWidth
                 value={task.descricao}
                 onChange={(e) => setTask({...task, descricao: e.target.value})}
+                autoComplete="off"
             />
             <TextField
                 select
@@ -131,7 +133,7 @@ function TaskDialogForm({task, setTask, prioridadesList, statusList, cityOptions
                     label="Data da Tarefa"
                     value={dayjs(task.data_tarefa)}
                     onChange={(date) => setTask({...task, data_tarefa: date})}
-                    renderInput={(params) => <TextField {...params} margin="dense"/>}
+                    renderInput={(params) => <TextField {...params} margin="dense" error={false} />}
                 />
             </LocalizationProvider>
             <CityAutocomplete
@@ -139,7 +141,6 @@ function TaskDialogForm({task, setTask, prioridadesList, statusList, cityOptions
                 handleCityInputChange={handleCityInputChange}
                 task={task}
                 setTask={setTask}
-
             />
         </>
     );
