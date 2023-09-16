@@ -1,24 +1,40 @@
 # ToDo App
+
 ![todo-app-diagrama](https://github.com/BrunoBasstos/mvp3-app-todo/assets/5402439/2a5f44d3-32af-44f1-aff3-9c15e7eef335)
 
 Este é um MVP para conclusão da terceira sprint do curso de pós graduação em engenharia de software da PUC-Rio.
 
-O ToDo App é uma aplicação em React que consome a [ToDo API](https://github.com/BrunoBasstos/mvp3-api-todo), uma aplicação Flask para gerenciamento de tarefas, e a
-[Bridge API](https://github.com/BrunoBasstos/mvp3-api-bridge), uma aplicação Flask que intermedia a comunicação com a [OpenWeather API](http://openweathermap.org) para
-obtenção de nomes de cidades e de previsão do tempo. 
+O ToDo App é uma aplicação em React que consome a [ToDo API](https://github.com/BrunoBasstos/mvp3-api-todo), uma
+aplicação Flask para gerenciamento de tarefas, e a
+[Bridge API](https://github.com/BrunoBasstos/mvp3-api-bridge), uma aplicação Flask que intermedia a comunicação com
+a [OpenWeather API](http://openweathermap.org) para
+obtenção de nomes de cidades e de previsão do tempo.
 
-A aplicação frontend fornece uma interface amigável e responsiva
-para o usuário interagir com a API, permitindo a visualização, criação, edição e exclusão de tarefas e suas respectivas
-prioridades.
+Além de interagir com as APIs mencionadas, o ToDo App também consome diretamente as
+APIs [AdviceSlip](https://api.adviceslip.com/) e [MyMemory](https://mymemory.translated.net/doc/spec.php) para obtenção
+de frases motivacionais aleatórias e tradução destas frases, respectivamente.
 
-A autenticação de usuário é realizada através da API utilizando a biblioteca JWT para geração de tokens de
-acesso.
+As rotas implementadas para a **AdviceSlip API** e para a **MyMemory API** são as seguintes:
+
+- `GET https://api.adviceslip.com/advice`: retorna uma frase motivacional aleatória em inglês.
+- `GET https://api.mymemory.translated.net/get?langpair=en|pt-br&{query}`: retorna a tradução da query
+  recebida como parâmetro.
+
+O objetivo do ToDo App é fornecer uma interface amigável e responsiva para o usuário interagir com as APIs, permitindo a
+visualização, criação, edição e exclusão de tarefas, além de permitir a visualização da previsão do tempo para uma
+cidade escolhida pelo usuário ao
+cadastrar uma tarefa e a visualização de frases motivacionais aleatórias.
 
 Este projeto é a evolução do MVP desenvolvido durante a primeira sprint do curso de pós-graduação em Engenharia de
-Software pela PUC-Rio. 
+Software pela PUC-Rio.
 
-Para mais informações sobre as APIs utilizadas, consulte os repositórios
-da [ToDo API](https://github.com/seu_usuario/seu_repositorio_api) e da [Bridge API](https://github.com/BrunoBasstos/mvp3-api-bridge).
+Para mais informações sobre as APIs utilizadas, consulte os respectivos repositórios ou sites:
+
+- [ToDo API](https://github.com/BrunoBasstos/mvp3-api-todo)
+- [Bridge API](https://github.com/BrunoBasstos/mvp3-api-bridge)
+- [OpenWeather API](http://openweathermap.org/api)
+- [AdviceSlip API](https://api.adviceslip.com/)
+- [MyMemory API](https://mymemory.translated.net/doc/spec.php)
 
 ## Tecnologias utilizadas
 
@@ -30,7 +46,7 @@ da [ToDo API](https://github.com/seu_usuario/seu_repositorio_api) e da [Bridge A
 ## Como executar
 
 1. Clone o repositório.
-2. Crie o arquivo .env usando o arquivo .env.example como base. 
+2. Crie o arquivo .env usando o arquivo .env.example como base.
 3. Instale as dependências do projeto com o comando `npm install` ou `yarn`.
 4. Inicie a aplicação com o comando `npm start` ou `yarn start`.
 5. Acesse a aplicação em `http://localhost:3000`.
@@ -58,8 +74,8 @@ Antes de executar o projeto, certifique-se de ter instalado:
 
 ## Observações
 
-Para utilizar o frontend, você deve ter a [ToDo API](https://github.com/BrunoBasstos/mvp3-api-todo) e a [Bridge API](https://github.com/BrunoBasstos/mvp3-api-bridge) em execução e
-configuradas corretamente.
+Para utilizar o frontend, você deve ter a [ToDo API](https://github.com/BrunoBasstos/mvp3-api-todo) e
+a [Bridge API](https://github.com/BrunoBasstos/mvp3-api-bridge) em execução e configuradas corretamente.
 
 ## Contribuições
 
