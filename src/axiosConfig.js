@@ -1,7 +1,7 @@
 import axios from 'axios';
 
-const TODO_API_URL = process.env.TODO_API_URL || 'http://localhost:5000';
-const BRIDGE_API_URL = process.env.BRIDGE_API_URL || 'http://localhost:5001';
+const TODO_API_URL = process.env.REACT_APP_TODO_API_URL || 'http://localhost:5000';
+const BRIDGE_API_URL = process.env.REACT_APP_BRIDGE_API_URL || 'http://localhost:5001';
 
 const token = localStorage.getItem('token');
 const commonHeaders = {
