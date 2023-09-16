@@ -65,6 +65,7 @@ const Login = ({onLogin, toggleForm}) => {
                     type="email"
                     value={formData.email}
                     onChange={handleChange}
+                    autoComplete="off"
                 />
                 <TextField
                     fullWidth
