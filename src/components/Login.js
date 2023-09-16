@@ -1,5 +1,5 @@
 // /src/components/Login.js
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import {todoApi} from '../axiosConfig';
 import {Box, TextField, Button, Typography} from '@mui/material';
 import {toast, ToastContainer} from "react-toastify";
@@ -9,6 +9,10 @@ const Login = ({onLogin, toggleForm}) => {
     const [formData, setFormData] = useState({
         email: '',
         senha: '',
+    });
+
+    useEffect(() => {
+        localStorage.removeItem(process.env.REACT_APP_ADVICE_KEY);
     });
 
     const handleChange = (e) => {
@@ -53,9 +57,6 @@ const Login = ({onLogin, toggleForm}) => {
     return (
         <Box sx={{width: '100%', maxWidth: 400, mx: 'auto'}}>
             <ToastContainer/>
-            {/*<Typography variant="h4" align="center" gutterBottom>*/}
-            {/*    Login*/}
-            {/*</Typography>*/}
             <form onSubmit={handleSubmit}>
                 <TextField
                     fullWidth
