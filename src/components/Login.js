@@ -36,11 +36,10 @@ const Login = ({onLogin, toggleForm}) => {
         } else {
             try {
                 const response = await todoApi.post('/login', formData);
-                const loggedUser = response.data[0];
                 const {access_token: token} = response.data[0];
                 localStorage.setItem('token', token);
                 todoApi.defaults.headers.common.Authorization = `Bearer ${token}`;
-                onLogin(loggedUser);
+                onLogin(response.data[0]);
             } catch (error) {
                 let loginErrors = [];
                 if (error.response && error.response.data) {
