@@ -11,7 +11,7 @@ import {
     DialogTitle,
     Grid,
 } from "@mui/material";
-import {DragDropContext, Droppable, Draggable} from "react-beautiful-dnd";
+import {DragDropContext, Droppable} from "react-beautiful-dnd";
 import {toast, ToastContainer} from "react-toastify";
 import ErrorToast from "./ErrorToast";
 import dayjs from "dayjs";
@@ -19,6 +19,7 @@ import dayjs from "dayjs";
 import TaskCard from "./TaskCard";
 import TaskDetails from './TaskDetails';
 import TaskDialogForm from './TaskDialogForm';
+import Advice from "./Advice";
 
 
 const TaskList = ({loggedUser}) => {
@@ -91,7 +92,7 @@ const TaskList = ({loggedUser}) => {
         let tmpTasks = response.data;
 
         const weatherPromises = tmpTasks.map(async (task) => {
-            if(!task.cidade || task.data_conclusao) return task;
+            if (!task.cidade || task.data_conclusao) return task;
 
             if (dayjs(task.data_tarefa).isSame(dayjs(), "day")) {
                 const response = await bridgeApi.get(`/weather/${task.cidade}`);
@@ -223,6 +224,7 @@ const TaskList = ({loggedUser}) => {
     return (
         <Box>
             <ToastContainer/>
+            <Advice message="Lembre-se de revisar suas tarefas diariamente!"/>
             <Typography variant="h4" align="center">
                 Lista de Tarefas
             </Typography>
