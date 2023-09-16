@@ -16,7 +16,6 @@ import ErrorToast from "./ErrorToast";
 function CityAutocomplete(props) {
     let selectedCity = null;
     let cityOptions = props.cityOptions;
-    // //if props.cityOptions is undefined, so, most likely, the api bridge lacks it's key
     if (props.cityOptions?.unique_id === null) {
         toast.error(<ErrorToast errors={["Erro ao buscar a cidade. Verifique a chave da API."]} />);
         cityOptions = [];
@@ -24,7 +23,6 @@ function CityAutocomplete(props) {
         if (props.cityOptions.length === 0 && props.task?.cidade) {
             selectedCity = {unique_id: props.task.cidade};
         } else {
-            // console.log("props.cityOptions", props.cityOptions.length, props.cityOptions, props.task?.cidade)
             selectedCity = props.cityOptions.find(city => city.unique_id === props.task?.cidade);
         }
     }
