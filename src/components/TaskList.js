@@ -91,7 +91,7 @@ const TaskList = ({loggedUser}) => {
         let tmpTasks = response.data;
 
         const weatherPromises = tmpTasks.map(async (task) => {
-            if(!task.cidade) return task;
+            if(!task.cidade || task.data_conclusao) return task;
 
             if (dayjs(task.data_tarefa).isSame(dayjs(), "day")) {
                 const response = await bridgeApi.get(`/weather/${task.cidade}`);
