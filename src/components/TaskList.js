@@ -312,7 +312,7 @@ const TaskList = ({loggedUser}) => {
                 ) : (
                     <TaskDetails
                         selectedTask={selectedTask}
-                        handleEdit={() => setEditMode(true)}
+                        handleEdit={handleEditTask}
                         handleClose={() => setSelectedTask(null)}
                     />
                 )}
