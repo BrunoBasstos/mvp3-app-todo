@@ -33,10 +33,10 @@ const Home = ({onLogin, toggleDarkMode}) => {
                 </IconButton>
                 <Box>
                     <Typography variant="h4" align="center" gutterBottom>
-                        Bem-vindo ao Projeto MVP
+                        Bem-vindo ao Projeto MVP 3
                     </Typography>
                     <Typography variant="body1" align="center" gutterBottom>
-                        Apenas um projeto para validação do aprendizado da primeira sprint do curso de Pós-Graduação em
+                        Apenas um projeto para validação do aprendizado da terceira sprint do curso de Pós-Graduação em
                         Engenharia de Software da PUC-RIO
                     </Typography>
                     {showRegister ? (
@@ -52,14 +52,20 @@ const Home = ({onLogin, toggleDarkMode}) => {
                     <Button
                         variant="contained"
                         target="_blank"
-                        href="https://github.com/BrunoBasstos/todo-front"
+                        href="https://github.com/BrunoBasstos/mvp3-app-todo"
                     ><GitHubIcon/> Frontend React
                     </Button>
                     <Button
                         variant="contained"
                         target="_blank"
-                        href="https://github.com/BrunoBasstos/todo-api"
+                        href="https://github.com/BrunoBasstos/mvp3-api-todo"
                     ><GitHubIcon/> Backend Python
+                    </Button>
+                    <Button
+                        variant="contained"
+                        target="_blank"
+                        href="https://github.com/BrunoBasstos/mvp3-api-bridge"
+                    ><GitHubIcon/> Bridge API
                     </Button>
                 </Box>
             </Grid>
