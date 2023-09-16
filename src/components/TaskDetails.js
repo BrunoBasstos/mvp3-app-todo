@@ -77,7 +77,7 @@ function TaskDetails({selectedTask, handleEdit, handleClose}) {
                     {(selectedTask.data_tarefa && new Date(selectedTask.data_tarefa) < new Date() || selectedTask.cidade === null || selectedTask?.data_conclusao) && (
                         <Grid item>
                             <Tooltip
-                                title={selectedTask.data_conclusao ? 'Tarefa concluída' : (selectedTask.cidade === null ? 'Cidade não informada' : 'Tarefa vencida')}
+                                title={selectedTask.data_conclusao ? 'Tarefa concluída' : (selectedTask.cidade === null ? 'Cidade não informada' : 'Tarefa vencida ou sem data')}
                             >
                                 <CloudOffIcon
                                     fontSize="medium"
