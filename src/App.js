@@ -64,6 +64,7 @@ function App() {
 
     const handleLogout = () => {
         localStorage.removeItem('token');
+        localStorage.removeItem(process.env.REACT_APP_ADVICE_KEY);
         setIsLoggedIn(false);
         todoApi.defaults.headers.common.Authorization = null;
     };
