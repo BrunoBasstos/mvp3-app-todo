@@ -1,6 +1,5 @@
 # ToDo App
-
-![todo-app-diagrama](https://github.com/BrunoBasstos/mvp3-app-todo/assets/5402439/2a5f44d3-32af-44f1-aff3-9c15e7eef335)
+![todo-app-diagrama](https://github.com/BrunoBasstos/mvp3-app-todo/assets/5402439/cd7cb938-ac24-4e38-93a9-6c2eb80ce122)
 
 Este é um MVP para conclusão da terceira sprint do curso de pós graduação em engenharia de software da PUC-Rio.
 
