@@ -27,6 +27,9 @@ function App() {
     const theme = createTheme({
         palette: {
             mode: darkMode ? 'dark' : 'light',
+            lightbulb: {
+                main: darkMode ? '#f9a825' : '#fff59d',
+            }
         },
     });
 
