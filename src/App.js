@@ -7,6 +7,7 @@ import TaskList from './components/TaskList';
 import UserList from './components/UserList';
 import Header from './components/Header';
 import Home from './components/Home';
+import Navigation from './components/Navigation';
 import {createTheme, ThemeProvider} from '@mui/material/styles';
 import {CssBaseline} from '@mui/material';
 
@@ -59,7 +60,7 @@ function App() {
     const handleLogin = (usuario) => {
         setIsLoggedIn(true);
         setLoggedUser(usuario);
-        window.location.reload();
+        Navigation.goToTasks();
     };
 
     const handleLogout = () => {
