@@ -73,6 +73,7 @@ const Register = ({handleRegister, toggleForm}) => {
                     type="text"
                     value={formData.nome}
                     onChange={handleChange}
+                    autocomplete="off"
                 />
                 <TextField
                     fullWidth
@@ -82,6 +83,7 @@ const Register = ({handleRegister, toggleForm}) => {
                     type="email"
                     value={formData.email}
                     onChange={handleChange}
+                    autocomplete="off"
                 />
                 <Grid container spacing={2}>
                     <Grid item xs={12} sm={6}>
@@ -93,6 +95,7 @@ const Register = ({handleRegister, toggleForm}) => {
                             type="password"
                             value={formData.senha}
                             onChange={handleChange}
+                            autocomplete="off"
                         />
                     </Grid>
                     <Grid item xs={12} sm={6}>
@@ -104,6 +107,7 @@ const Register = ({handleRegister, toggleForm}) => {
                             type="password"
                             value={formData.senhaConfirm}
                             onChange={handleChange}
+                            autocomplete="off"
                         />
                     </Grid>
                 </Grid>
