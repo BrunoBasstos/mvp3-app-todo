@@ -69,7 +69,7 @@ function TaskCard({task, index, deleteTask, handleTaskClick, loggedUser}) {
                             {(task.data_tarefa && new Date(task.data_tarefa) < new Date() || task.cidade === null || task?.data_conclusao) && (
                                 <Grid item>
                                     <Tooltip
-                                        title={task.data_conclusao ? 'Tarefa concluída' : (task.cidade === null ? 'Cidade não informada' : 'Tarefa vencida')}
+                                        title={task.data_conclusao ? 'Tarefa concluída' : (task.cidade === null ? 'Cidade não informada' : 'Tarefa vencida ou sem data')}
                                     >
                                         <CloudOffIcon
                                             fontSize="medium"
