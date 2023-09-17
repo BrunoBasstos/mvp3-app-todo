@@ -46,7 +46,6 @@ Para mais informações sobre as APIs utilizadas, consulte os respectivos reposi
 
 1. Clone o repositório.
 2. Crie o arquivo .env usando o arquivo .env.example como base.
-> **IMPORTANTE** Não esqueça criar o arquivo .env da aplicação para que ela possa inicializar e se comunicar com as demais aplicações do projeto corretamente corretamente.
 4. Instale as dependências do projeto com o comando `npm install` ou `yarn`.
 5. Inicie a aplicação com o comando `npm start` ou `yarn start`.
 6. Acesse a aplicação em `http://localhost:3000`.
@@ -63,6 +62,8 @@ Para mais informações sobre as APIs utilizadas, consulte os respectivos reposi
 5. Acesse a aplicação em `http://localhost:3000`.
 6. Você poderá fazer um aesso inicial com o usuário `admin@mail.com` e senha `admin1234` ou registrar-se para iniciar
    como um usuário comum.
+
+> **IMPORTANTE** Não esqueça criar o arquivo .env da aplicação para que ela possa inicializar e se comunicar com as demais aplicações do projeto corretamente corretamente. 
 
 ## Pré-requisitos
 
