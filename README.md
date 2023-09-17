@@ -55,7 +55,7 @@ Para mais informações sobre as APIs utilizadas, consulte os respectivos reposi
 1. Clone o repositório.
 2. Crie o arquivo .env usando o arquivo .env.example como base.
 3. Execute o comando `docker build -t todo-app .` para criar a imagem do container.
-4. Execute o comando `docker run --name todo-app -p 5000:5000 todo-app`.
+4. Execute o comando `docker run --name todo-app -p 3000:3000 todo-app`.
     1. Note que isto criará um container com o nome todo-app. Para reiniciar a aplicação nas próximas vezes, basta
        executar o comando `docker start todo-app`. Caso você queira remover o container,
        execute `docker rm -f todo-app`.
