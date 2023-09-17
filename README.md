@@ -46,9 +46,10 @@ Para mais informações sobre as APIs utilizadas, consulte os respectivos reposi
 
 1. Clone o repositório.
 2. Crie o arquivo .env usando o arquivo .env.example como base.
-3. Instale as dependências do projeto com o comando `npm install` ou `yarn`.
-4. Inicie a aplicação com o comando `npm start` ou `yarn start`.
-5. Acesse a aplicação em `http://localhost:3000`.
+> **IMPORTANTE** Não esqueça criar o arquivo .env da aplicação para que ela possa inicializar e se comunicar com as demais aplicações do projeto corretamente corretamente.
+4. Instale as dependências do projeto com o comando `npm install` ou `yarn`.
+5. Inicie a aplicação com o comando `npm start` ou `yarn start`.
+6. Acesse a aplicação em `http://localhost:3000`.
 
 ## Como executar com Docker
 
